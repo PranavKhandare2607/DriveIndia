@@ -31,6 +31,7 @@ const config = [
       'react-refresh': reactRefreshPlugin,
     },
     rules: {
+      'react/react-in-jsx-scope': 'off',
       'semi': ['error', 'never'],
       'brace-style': ['error', '1tbs'],
       'react-hooks/exhaustive-deps': 'warn',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   FormControl,
@@ -98,68 +98,96 @@ const CreateBooking = () => {
   }, [from])
 
   const onSubmit = async (data: FormFields) => {
-    if (!carObj || fromError || toError) {
-      helper.error()
-      return
-    }
+  console.log('SUBMIT START', data)
 
-    const additionalDriverSet = helper.carOptionAvailable(carObj, 'additionalDriver') && data.additionalDriver
+  if (!carObj || fromError || toError) {
+    console.log('BLOCKED BEFORE API', {
+      carObj,
+      fromError,
+      toError,
+    })
 
-    const booking: bookcarsTypes.Booking = {
-      supplier: data.supplier?._id!,
-      car: carObj._id,
-      driver: data.driver?._id,
-      pickupLocation: data.pickupLocation!._id,
-      dropOffLocation: data.dropOffLocation!._id,
-      from: data.from!,
-      to: data.to!,
-      status: data.status as bookcarsTypes.BookingStatus,
-      cancellation: data.cancellation,
-      amendments: data.amendments,
-      theftProtection: data.theftProtection,
-      collisionDamageWaiver: data.collisionDamageWaiver,
-      fullInsurance: data.fullInsurance,
-      additionalDriver: additionalDriverSet,
-    }
+    helper.error()
+    return
+  }
 
-    let _additionalDriver: bookcarsTypes.AdditionalDriver | undefined = undefined
-    if (additionalDriverSet) {
-      _additionalDriver = {
-        fullName: data.additionalDriverFullName!,
-        email: data.additionalDriverEmail!,
-        phone: data.additionalDriverPhone!,
-        birthDate: data.additionalDriverBirthDate!,
-      }
-    }
+  const additionalDriverSet =
+    helper.carOptionAvailable(carObj, 'additionalDriver') &&
+    data.additionalDriver
 
-    const options: bookcarsTypes.CarOptions = {
-      cancellation: data.cancellation,
-      amendments: data.amendments,
-      theftProtection: data.theftProtection,
-      collisionDamageWaiver: data.collisionDamageWaiver,
-      fullInsurance: data.fullInsurance,
-      additionalDriver: additionalDriverSet,
-    }
+  const booking: bookcarsTypes.Booking = {
+    supplier: data.supplier?._id!,
+    car: carObj._id,
+    driver: data.driver?._id,
+    pickupLocation: data.pickupLocation!._id,
+    dropOffLocation: data.dropOffLocation!._id,
+    from: data.from!,
+    to: data.to!,
+    status: data.status as bookcarsTypes.BookingStatus,
+    cancellation: data.cancellation,
+    amendments: data.amendments,
+    theftProtection: data.theftProtection,
+    collisionDamageWaiver: data.collisionDamageWaiver,
+    fullInsurance: data.fullInsurance,
+    additionalDriver: additionalDriverSet,
+  }
 
-    try {
-      // use bookcarsHelper.calculatePrice
-      const price = await bookcarsHelper.calculateTotalPrice(carObj, from!, to!, carObj.supplier.priceChangeRate || 0, options)
-      booking.price = price
+  let _additionalDriver: bookcarsTypes.AdditionalDriver | undefined
 
-      const _booking = await BookingService.create({
-        booking,
-        additionalDriver: _additionalDriver,
-      })
-
-      if (_booking && _booking._id) {
-        navigate('/')
-      } else {
-        helper.error()
-      }
-    } catch (err) {
-      helper.error(err)
+  if (additionalDriverSet) {
+    _additionalDriver = {
+      fullName: data.additionalDriverFullName!,
+      email: data.additionalDriverEmail!,
+      phone: data.additionalDriverPhone!,
+      birthDate: data.additionalDriverBirthDate!,
     }
   }
+
+  const options: bookcarsTypes.CarOptions = {
+    cancellation: data.cancellation,
+    amendments: data.amendments,
+    theftProtection: data.theftProtection,
+    collisionDamageWaiver: data.collisionDamageWaiver,
+    fullInsurance: data.fullInsurance,
+    additionalDriver: additionalDriverSet,
+  }
+
+  try {
+    console.log('CALCULATING PRICE')
+
+    const price = await bookcarsHelper.calculateTotalPrice(
+      carObj,
+      from!,
+      to!,
+      carObj.supplier.priceChangeRate || 0,
+      options
+    )
+
+    booking.price = price
+
+    console.log('SENDING BOOKING', {
+      booking,
+      additionalDriver: _additionalDriver,
+    })
+
+    const _booking = await BookingService.create({
+      booking,
+      additionalDriver: _additionalDriver,
+    })
+
+    console.log('BOOKING RESPONSE', _booking)
+
+    if (_booking && _booking._id) {
+      navigate('/')
+    } else {
+      console.log('NO BOOKING ID RETURNED')
+      helper.error()
+    }
+  } catch (err) {
+  console.error('CREATE BOOKING ERROR:', err)
+  helper.error(err)
+}
+}
 
   const onLoad = (user?: bookcarsTypes.User) => {
     if (user) {

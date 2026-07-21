@@ -213,7 +213,7 @@ const CreateCar = () => {
         isDateBasedPrice: data.isDateBasedPrice,
         dateBasedPrices: data.dateBasedPrices || [],
       }
-
+console.log('Payload:', payload)
       const car = await CarService.create(payload)
 
       if (car && car._id) {

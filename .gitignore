@@ -7,3 +7,8 @@
 /**/dist
 /node_modules
 .eslintcache
+node_modules/
+.env
+.env.*
+uploads/
+build.log
