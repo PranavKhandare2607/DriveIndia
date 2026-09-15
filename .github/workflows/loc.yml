@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+
 jobs:
   loc_job:
     runs-on: ubuntu-latest
@@ -15,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create the badge
         uses: shadowmoose/GHA-LoC-Badge@1.0.0
@@ -40,3 +43,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
+          force_orphan: true
