@@ -22,7 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "@sentry/node": "^10.43.0",
-    "axios": "^1.13.6",
+    "axios": "^1.20.0",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",
     "cookie-parser": "^1.4.7",
@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.29.0",
+    "@babel/core": "^7.29.7",
     "@babel/plugin-transform-modules-commonjs": "^7.28.6",
     "@babel/preset-env": "^7.29.2",
     "@babel/preset-typescript": "^7.28.5",
